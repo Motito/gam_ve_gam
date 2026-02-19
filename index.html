@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Gottom Project</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Recoleta:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Recoleta:wght@400;600;700&family=Heebo:wght@400;700&display=swap');
 
     @font-face {
       font-family: 'MiriMedium';
@@ -526,7 +526,9 @@
 
     // Text positioned outside the flower, near petal tips
     // 3 rounds of text, each with 3 snippets
-    const lineHeight = 32;
+    const isMobile = window.innerWidth < 768;
+    const lineHeight = isMobile ? 54 : 32;
+    const svgFontSize = isMobile ? 48 : 28;
 
     const textPositions = [
       { x: tip1.x + 198, y: tip1.y - 10 },
@@ -561,8 +563,8 @@
     const svgTexts = [];
     for (let t = 0; t < 3; t++) {
       const text = document.createElementNS(NS, 'text');
-      text.setAttribute('font-family', "'MiriMedium', sans-serif");
-      text.setAttribute('font-size', '28');
+      text.setAttribute('font-family', "'MiriMedium', 'Heebo', sans-serif");
+      text.setAttribute('font-size', svgFontSize);
       text.setAttribute('fill', '#3a5a30');
       text.setAttribute('text-anchor', 'middle');
       text.setAttribute('direction', 'rtl');
