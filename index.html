@@ -570,7 +570,7 @@
     const svgFontSize = isMobile ? 34 : 28;
 
     const textPositions = [
-      { x: tip1.x + 198, y: tip1.y - 10 },
+      { x: tip1.x + 220, y: tip1.y - 10 },
       { x: tip3.x + 178, y: tip3.y + 40 },
       { x: tip4.x - 138, y: tip4.y + 40 },
     ];
@@ -756,7 +756,7 @@
 
     function resetMasterGroup() {
       masterGroup.setAttribute('transform', '');
-      masterGroup.style.opacity = '1';
+      // opacity is restored by runAnimation() after visuals are cleared
     }
 
     function wait(ms) {
@@ -769,7 +769,8 @@
       resetTexts();
       resetMasterGroup();
       setTextContent(currentRound);
-      updateVisuals();
+      updateVisuals();             // clip-circles reset to r=0 (all petals hidden)
+      masterGroup.style.opacity = '1'; // reveal only after visuals are cleared
 
       // Grow petals with text
       await animatePetal(0, PETAL_DURATION);
