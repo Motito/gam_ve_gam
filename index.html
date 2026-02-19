@@ -3,7 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Gottom Project</title>
+  <title>גם וגם וגם</title>
+
+  <!-- Favicon (populated dynamically from logo SVG via JS) -->
+  <link rel="icon" id="favicon-link" type="image/svg+xml" href="data:,">
+
+  <!-- Social sharing (WhatsApp / iMessage / Slack …) -->
+  <meta property="og:title"       content="גם וגם וגם">
+  <meta property="og:type"        content="website">
+  <meta property="og:image"       content="/og-image.svg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card"       content="summary_large_image">
+  <meta name="twitter:title"      content="גם וגם וגם">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Recoleta:wght@400;600;700&display=swap');
 
@@ -910,6 +922,16 @@
       dot.setAttribute('r', 4);
       dot.setAttribute('fill', '#3a7d44');
       logoSvg.appendChild(dot);
+    })();
+
+    // ── Favicon: serialise the rendered logo SVG and set it as the page icon ──
+    (function setFavicon() {
+      const logoEl = document.getElementById('logo-flower-svg');
+      const svgData = new XMLSerializer().serializeToString(logoEl);
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const link = document.getElementById('favicon-link');
+      if (link) link.href = url;
     })();
   </script>
 </body>
