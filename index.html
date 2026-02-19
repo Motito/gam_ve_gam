@@ -117,13 +117,16 @@
 
     .footer-content {
       padding-top: 12px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 16px;
     }
 
     .footer-tagline {
       font-family: 'MiriMedium', 'Heebo', sans-serif;
       color: #3a5a30;
       font-size: clamp(13px, 1.8vw, 17px);
-      margin-bottom: 10px;
     }
 
     .footer-content a {
@@ -151,6 +154,11 @@
         order: 2;
       }
 
+      .header-tagline .line1,
+      .header-tagline .line2 {
+        font-size: clamp(38px, 9vw, 60px);
+      }
+
       .header-tagline .line2 {
         padding-left: 0;
       }
@@ -165,6 +173,17 @@
 
       .footer {
         align-items: center;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .footer-tagline {
+        font-size: 11px;
+        text-align: center;
       }
     }
   </style>
@@ -535,8 +554,8 @@
     // Text positioned outside the flower, near petal tips
     // 3 rounds of text, each with 3 snippets
     const isMobile = window.innerWidth < 768;
-    const lineHeight = isMobile ? 54 : 32;
-    const svgFontSize = isMobile ? 48 : 28;
+    const lineHeight = isMobile ? 40 : 32;
+    const svgFontSize = isMobile ? 34 : 28;
 
     const textPositions = [
       { x: tip1.x + 198, y: tip1.y - 10 },
