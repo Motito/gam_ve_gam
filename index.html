@@ -694,7 +694,10 @@
     }
 
     function showText(n) {
-      svgTexts[n].style.opacity = '1';
+      const el = svgTexts[n];
+      el.style.transition = 'opacity 0.6s ease'; // re-enable fade-in
+      el.getBoundingClientRect();                 // flush style so transition fires
+      el.style.opacity = '1';
     }
 
     function hideTexts() {
@@ -702,7 +705,10 @@
     }
 
     function resetTexts() {
-      svgTexts.forEach(t => { t.style.opacity = '0'; });
+      svgTexts.forEach(t => {
+        t.style.transition = 'none'; // snap to 0 instantly — no CSS fade that would flash
+        t.style.opacity = '0';
+      });
     }
 
     const PETAL_DURATION = 2000;
