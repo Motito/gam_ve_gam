@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob: data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
   <title>גם וגם וגם</title>
 
   <!-- Favicon (populated dynamically from logo SVG via JS) -->
@@ -16,8 +17,10 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card"       content="summary_large_image">
   <meta name="twitter:title"      content="גם וגם וגם">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Recoleta:wght@400;600;700&family=Heebo:wght@400;700&display=swap">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Recoleta:wght@400;600;700&family=Heebo:wght@400;700&display=swap');
 
     @font-face {
       font-family: 'MiriMedium';
@@ -764,42 +767,46 @@
     }
 
     async function runAnimation() {
-      // Reset everything
-      for (let i = 0; i < NUM; i++) petalProgress[i] = 0;
-      resetTexts();
-      resetMasterGroup();
-      setTextContent(currentRound);
-      updateVisuals();             // clip-circles reset to r=0 (all petals hidden)
-      masterGroup.style.opacity = '1'; // reveal only after visuals are cleared
+      try {
+        // Reset everything
+        for (let i = 0; i < NUM; i++) petalProgress[i] = 0;
+        resetTexts();
+        resetMasterGroup();
+        setTextContent(currentRound);
+        updateVisuals();             // clip-circles reset to r=0 (all petals hidden)
+        masterGroup.style.opacity = '1'; // reveal only after visuals are cleared
 
-      // Grow petals with text
-      await animatePetal(0, PETAL_DURATION);
-      showText(0);
+        // Grow petals with text
+        await animatePetal(0, PETAL_DURATION);
+        showText(0);
 
-      await animatePetal(2, PETAL_DURATION);
-      showText(1);
+        await animatePetal(2, PETAL_DURATION);
+        showText(1);
 
-      await animatePetal(3, PETAL_DURATION);
-      showText(2);
+        await animatePetal(3, PETAL_DURATION);
+        showText(2);
 
-      await Promise.all([
-        animatePetal(1, PETAL_DURATION),
-        animatePetal(4, PETAL_DURATION),
-      ]);
+        await Promise.all([
+          animatePetal(1, PETAL_DURATION),
+          animatePetal(4, PETAL_DURATION),
+        ]);
 
-      // Hold full flower for 3 seconds
-      await wait(HOLD_DURATION);
+        // Hold full flower for 3 seconds
+        await wait(HOLD_DURATION);
 
-      // Exit: fade out the full flower and text together
-      await animateFadeOut(FADE_DURATION);
+        // Exit: fade out the full flower and text together
+        await animateFadeOut(FADE_DURATION);
 
-      // Pause before restart
-      await wait(PAUSE_DURATION);
+        // Pause before restart
+        await wait(PAUSE_DURATION);
 
-      // Advance to next round (cycle through all 3)
-      currentRound = (currentRound + 1) % allRounds.length;
+        // Advance to next round (cycle through all 3)
+        currentRound = (currentRound + 1) % allRounds.length;
 
-      runAnimation();
+        runAnimation();
+      } catch (e) {
+        setTimeout(runAnimation, 2000);
+      }
     }
 
     updateVisuals();
@@ -960,7 +967,10 @@
       const blob = new Blob([svgData], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
       const link = document.getElementById('favicon-link');
-      if (link) link.href = url;
+      if (link) {
+        link.href = url;
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      }
     })();
   </script>
 </body>
