@@ -5,14 +5,10 @@ const cx = 250;
 const cy = 250;
 const NUM = 5;
 
-// viewBox: generous padding for flower + text
-const padding = 220;
-const maxExtent = offsetFromCenter + R + padding;
-const vbMin = cx - maxExtent;
-const vbSize = maxExtent * 2;
-
+// viewBox: the flower spans x 4..496, y -8..459; the extra room holds the three phrases.
+// Text size is expressed in these units, so it scales with the flower on every screen.
 const svg = document.getElementById('flower-svg');
-svg.setAttribute('viewBox', `${vbMin} ${vbMin} ${vbSize} ${vbSize}`);
+svg.setAttribute('viewBox', '-140 -74 780 640');
 
 // ── Circle centers (offset -36° so petals point at 0,72,144,216,288) ──
 const circles = [];
@@ -219,27 +215,6 @@ function computeVeinPaths(petalIdx) {
   return paths;
 }
 
-// ── Find petal tip positions (furthest point from center along petal axis) ──
-function getPetalTip(petalIdx) {
-  const angle = petalAngles[petalIdx];
-  const cosA = Math.cos(angle);
-  const sinA = Math.sin(angle);
-  const [a, b] = petalCirclePairs[petalIdx];
-  let maxAlong = 0;
-  for (let t = 0; t <= 300; t++) {
-    const dist = t * 0.7;
-    const px = cx + cosA * dist;
-    const py = cy + sinA * dist;
-    if (isInsideCircle(px, py, circles[a], R) && isInsideCircle(px, py, circles[b], R)) {
-      maxAlong = dist;
-    }
-  }
-  return {
-    x: cx + cosA * maxAlong,
-    y: cy + sinA * maxAlong,
-  };
-}
-
 // ── Build SVG DOM ──
 const NS = 'http://www.w3.org/2000/svg';
 const defs = document.createElementNS(NS, 'defs');
@@ -311,49 +286,42 @@ centerDot.setAttribute('fill', '#3a7d44');
 centerDot.style.opacity = '0';
 masterGroup.appendChild(centerDot);
 
-// ── SVG Text elements positioned near petal tips ──
-const tip1 = getPetalTip(0); // Petal 1 — top, text to upper-right
-const tip3 = getPetalTip(2); // Petal 3 — lower-right, text to bottom-right
-const tip4 = getPetalTip(3); // Petal 4 — lower-left, text to bottom-left
-
-// Text positioned outside the flower, near petal tips
-// 3 rounds of text, each with 3 snippets
-const isMobile = window.innerWidth < 768;
-const lineHeight = isMobile ? 40 : 32;
-const svgFontSize = isMobile ? 34 : 28;
+// ── SVG text: three phrases placed beside the petal tips ──
+// Reading order is left to right: top petal, lower-left petal, lower-right petal.
+const svgFontSize = 34;
+const lineHeight = 44;
 
 const textPositions = [
-  { x: tip1.x + 220, y: tip1.y - 10 },
-  { x: tip3.x + 178, y: tip3.y + 40 },
-  { x: tip4.x - 138, y: tip4.y + 40 },
+  { x: 84,  y: 18  },  // beside the top petal, upper left
+  { x: 48,  y: 514 },  // under the lower-left petal
+  { x: 468, y: 514 },  // under the lower-right petal
 ];
 
+// 3 rounds, 3 phrases each (top, lower-left, lower-right), one or two lines per phrase
 const allRounds = [
-  // Round 1
+  // Round 1: sales
   [
-    ['גם', 'סוגר עסקאות'],
-    ['גם', 'מכיר את עולם', 'התוכן המקצועי'],
-    ['וגם', 'אחלה בן אדם', 'שמבין תרבות סטארטאפ'],
+    ['Hits quota,', 'then beats it'],
+    ["Speaks the customer's", 'language'],
+    ['Fits your startup', 'culture'],
   ],
-  // Round 2
+  // Round 2: technical
   [
-    ['גם', 'טכנית ויכולה', 'לצלול לפרטים'],
-    ['גם', 'חיה ונושמת לקוחות'],
-    ['וגם', 'מדברת ישראלית שוטפת'],
+    ['Technical enough', 'to go deep'],
+    ['Obsessed with', 'your customers'],
+    ['Gets how Israeli', 'teams work'],
   ],
-  // Round 3
+  // Round 3: product
   [
-    ['גם', 'חושב אסטרטגית', 'ומכיר את השוק'],
-    ['גם', 'אוהב ללכלך את הידיים', 'וכבר בנה מאפס'],
-    ['וגם', 'כיף לשבת איתו לבירה'],
+    ['Thinks strategy,', 'knows the market'],
+    ['At home in the', 'zero-to-one chaos'],
+    ['The person everyone', 'wants in the room'],
   ],
 ];
 
 let currentRound = 0;
 
 // Create 3 group elements (one per position); each holds one <text> per line.
-// Using separate <text> elements (not <tspan>) avoids the SVG BiDi bug where
-// the browser reorders characters across tspan boundaries in RTL paragraphs.
 const svgTexts = [];
 for (let t = 0; t < 3; t++) {
   const g = document.createElementNS(NS, 'g');
@@ -372,14 +340,13 @@ function setTextContent(roundIndex) {
     const pos = textPositions[t];
     for (let i = 0; i < lines.length; i++) {
       const text = document.createElementNS(NS, 'text');
-      text.setAttribute('font-family', "'MiriMedium', 'Heebo', sans-serif");
+      text.setAttribute('font-family', "'Figtree', system-ui, sans-serif");
       text.setAttribute('font-size', svgFontSize);
+      text.setAttribute('font-weight', '400');
       text.setAttribute('fill', '#3a5a30');
       text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('direction', 'rtl');
       text.setAttribute('x', pos.x);
       text.setAttribute('y', pos.y + i * lineHeight);
-      if (i === 0) text.setAttribute('font-weight', 'bold');
       text.textContent = lines[i];
       g.appendChild(text);
     }
@@ -522,8 +489,24 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Pause between rounds while the flower is scrolled out of view (saves battery on phones)
+let onScreen = true;
+let resumeWaiters = [];
+new IntersectionObserver(entries => {
+  onScreen = entries[0].isIntersecting;
+  if (onScreen) {
+    resumeWaiters.forEach(resolve => resolve());
+    resumeWaiters = [];
+  }
+}).observe(svg);
+
+function whenOnScreen() {
+  return onScreen ? Promise.resolve() : new Promise(resolve => resumeWaiters.push(resolve));
+}
+
 async function runAnimation() {
   try {
+    await whenOnScreen();
     // Reset everything
     for (let i = 0; i < NUM; i++) petalProgress[i] = 0;
     resetTexts();
@@ -536,10 +519,10 @@ async function runAnimation() {
     await animatePetal(0, PETAL_DURATION);
     showText(0);
 
-    await animatePetal(2, PETAL_DURATION);
+    await animatePetal(3, PETAL_DURATION);
     showText(1);
 
-    await animatePetal(3, PETAL_DURATION);
+    await animatePetal(2, PETAL_DURATION);
     showText(2);
 
     await Promise.all([
@@ -566,7 +549,15 @@ async function runAnimation() {
 }
 
 updateVisuals();
-runAnimation();
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // No motion: show the finished flower with the first round of phrases
+  for (let i = 0; i < NUM; i++) petalProgress[i] = 1;
+  setTextContent(0);
+  updateVisuals();
+  svgTexts.forEach(t => { t.style.transition = 'none'; t.style.opacity = '1'; });
+} else {
+  runAnimation();
+}
 
 // ── Logo flower (small, static, fully grown, with veins like main flower) ──
 (function buildLogoFlower() {
