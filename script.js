@@ -8,7 +8,7 @@ const NUM = 5;
 // viewBox: the flower spans x 4..496, y -8..459; the extra room holds the three phrases.
 // Text size is expressed in these units, so it scales with the flower on every screen.
 const svg = document.getElementById('flower-svg');
-svg.setAttribute('viewBox', svg.dataset.viewbox || '-140 -22 780 588');
+svg.setAttribute('viewBox', '-140 -22 780 588');
 
 // ── Circle centers (offset -36° so petals point at 0,72,144,216,288) ──
 const circles = [];
