@@ -113,8 +113,10 @@
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
       list-style: none;
     }
+    .recruit-list::-webkit-scrollbar { display: none; }
     .recruit {
       flex: none;
       width: 220px;
@@ -138,7 +140,7 @@
     .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .photo svg { width: 78%; height: auto; display: block; }
     .recruit-name { font-family: var(--display); font-size: 20px; line-height: 1.2; color: var(--green); padding: 0 4px; }
-    .recruit-role { font-size: 15px; padding: 0 4px; }
+    
     .linkedin {
       display: inline-flex;
       align-items: center;
@@ -151,18 +153,22 @@
       text-decoration: none;
       align-self: flex-start;
     }
-    .linkedin .in {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      background: var(--green);
-      color: var(--butter);
-      font-weight: 800;
-      font-size: 13px;
+    .linkedin svg { width: 20px; height: 20px; fill: currentColor; flex: none; }
+    .recruit-info { padding: 0 4px; flex: 1; }
+    .recruit-name { padding: 0; }
+    .recruit-role { font-size: 15px; line-height: 1.35; margin-top: 2px; }
+
+    .dots { display: flex; justify-content: center; gap: 4px; margin-top: 8px; }
+    .dots button {
+      width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
+    .dots button::before {
+      content: ""; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); opacity: 0.25; transition: opacity 0.2s ease;
+    }
+    .dots button[aria-current="true"]::before { opacity: 1; }
+    .dots button:focus-visible { outline: 3px solid var(--green); outline-offset: 0; border-radius: 6px; }
 
     /* ── Contact ── */
     .contact { background: var(--green); color: var(--butter); }
@@ -182,6 +188,7 @@
       .flower-wrap { max-width: 480px; }
       .recruit-list { max-width: 1120px; margin-inline: auto; overflow: visible; flex-wrap: wrap; }
       .recruit { width: calc(25% - 9px); }
+      .dots { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -228,38 +235,34 @@
       </div>
     </section>
 
-    <!-- HIDDEN until the real recruits (photo, name, role, LinkedIn) are added: delete the "hidden" attribute below to show it -->
-    <section class="recruits" id="recruits" aria-labelledby="recruits-title" hidden>
+    <section class="recruits" id="recruits" aria-labelledby="recruits-title">
       <div class="wrap">
         <h2 id="recruits-title">Our most recent recruits</h2>
       </div>
       <!--
-        One <li> per recruit, newest first. To add a recruit: copy a <li>, swap the placeholder
-        <div class="photo"> for <div class="photo"><img src="assets/recruits/name.jpg" alt="Name, Role" loading="lazy" width="400" height="400"></div>,
-        and fill in the name, role and LinkedIn URL.
+        One <li> per recruit, newest first. Photo: assets/recruits/<name>.jpg (square, at least 440px).
+        The carousel advances by itself on narrow screens; the dots are added by carousel.js.
       -->
-      <ul class="recruit-list">
+      <div class="carousel" data-carousel>
+      <ul class="recruit-list" aria-label="Our most recent recruits">
         <li class="recruit">
-          <div class="photo" style="background:#c9e265"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="19" fill="#006c3f" opacity="0.3"/><path d="M8 100C8 74 27 62 50 62C73 62 92 74 92 100Z" fill="#006c3f" opacity="0.3"/></svg></div>
-          <div><div class="recruit-name">[Name]</div><div class="recruit-role">[Role]</div></div>
-          <a class="linkedin" href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener noreferrer"><span class="in">in</span>LinkedIn</a>
+          <div class="photo" style="background:#c9e265"><img src="assets/recruits/yotav-masa.jpg" alt="Yotav Masa" width="480" height="480" loading="lazy"></div>
+          <div class="recruit-info"><div class="recruit-name">Yotav Masa</div><div class="recruit-role">Head of Front-End Engineering</div></div>
+          <a class="linkedin" href="https://www.linkedin.com/in/yotav" target="_blank" rel="noopener noreferrer" aria-label="Yotav Masa on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span>LinkedIn</span></a>
         </li>
         <li class="recruit">
-          <div class="photo" style="background:#6bbf59"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="19" fill="#006c3f" opacity="0.3"/><path d="M8 100C8 74 27 62 50 62C73 62 92 74 92 100Z" fill="#006c3f" opacity="0.3"/></svg></div>
-          <div><div class="recruit-name">[Name]</div><div class="recruit-role">[Role]</div></div>
-          <a class="linkedin" href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener noreferrer"><span class="in">in</span>LinkedIn</a>
+          <div class="photo" style="background:#a9d48a"><img src="assets/recruits/yossi-sharbat.jpg" alt="Yossi Sharbat" width="480" height="480" loading="lazy"></div>
+          <div class="recruit-info"><div class="recruit-name">Yossi Sharbat</div><div class="recruit-role">Vice President of Product Management</div></div>
+          <a class="linkedin" href="https://www.linkedin.com/in/yossi-sharbat-01868a8b" target="_blank" rel="noopener noreferrer" aria-label="Yossi Sharbat on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span>LinkedIn</span></a>
         </li>
         <li class="recruit">
-          <div class="photo" style="background:#f6eaa3"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="19" fill="#006c3f" opacity="0.3"/><path d="M8 100C8 74 27 62 50 62C73 62 92 74 92 100Z" fill="#006c3f" opacity="0.3"/></svg></div>
-          <div><div class="recruit-name">[Name]</div><div class="recruit-role">[Role]</div></div>
-          <a class="linkedin" href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener noreferrer"><span class="in">in</span>LinkedIn</a>
-        </li>
-        <li class="recruit">
-          <div class="photo" style="background:#a9d48a"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="38" r="19" fill="#006c3f" opacity="0.3"/><path d="M8 100C8 74 27 62 50 62C73 62 92 74 92 100Z" fill="#006c3f" opacity="0.3"/></svg></div>
-          <div><div class="recruit-name">[Name]</div><div class="recruit-role">[Role]</div></div>
-          <a class="linkedin" href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener noreferrer"><span class="in">in</span>LinkedIn</a>
+          <div class="photo" style="background:#f6eaa3"><img src="assets/recruits/liran-barel-desheh.jpg" alt="Liran Barel Desheh" width="480" height="480" loading="lazy"></div>
+          <div class="recruit-info"><div class="recruit-name">Liran Barel Desheh</div><div class="recruit-role">Senior Customer Success</div></div>
+          <a class="linkedin" href="https://www.linkedin.com/in/liranbareldesheh" target="_blank" rel="noopener noreferrer" aria-label="Liran Barel Desheh on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span>LinkedIn</span></a>
         </li>
       </ul>
+      <div class="dots" data-dots></div>
+      </div>
     </section>
   </main>
 
@@ -280,5 +283,6 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="carousel.js"></script>
 </body>
 </html>
