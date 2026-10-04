@@ -180,6 +180,40 @@
     .contact a:focus-visible { outline-color: var(--butter); }
     .copyright { font-size: 13px; opacity: 0.75; padding-top: 12px; }
 
+    /* ── Email fallback (shown when no mail app opens) ── */
+    .toast {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      margin: 0 auto;
+      width: max-content;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: calc(100vw - 32px);
+      padding: 8px 8px 8px 16px;
+      background: var(--green);
+      color: var(--butter);
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0, 60, 30, 0.25);
+      font-size: 15px;
+    }
+    .toast span { min-width: 0; overflow-wrap: anywhere; user-select: all; }
+    .toast button {
+      flex: none;
+      min-height: 44px;
+      padding: 0 16px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--butter);
+      color: var(--green);
+      font: 700 14px var(--text);
+      cursor: pointer;
+    }
+    .toast button:focus-visible { outline: 3px solid var(--butter); outline-offset: 2px; }
+
     @media (min-width: 900px) {
       .nav { max-width: 1120px; margin: 0 auto; justify-content: flex-start; }
       .logo { width: 200px; }
@@ -284,5 +318,6 @@
 
   <script src="script.js"></script>
   <script src="carousel.js"></script>
+  <script src="contact.js"></script>
 </body>
 </html>
